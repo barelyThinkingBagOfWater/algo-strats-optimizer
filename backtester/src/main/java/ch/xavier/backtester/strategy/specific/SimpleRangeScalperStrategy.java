@@ -7,7 +7,7 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
-import org.ta4j.core.trading.rules.*;
+import org.ta4j.core.rules.*;
 
 /**
  * http://www.investopedia.com/terms/s/scalping.asp
@@ -33,7 +33,7 @@ public class SimpleRangeScalperStrategy {
         //SHORT TERM start, long term below
         DifferenceIndicator d_middle_lower = new DifferenceIndicator(middleBollingerBand, lowerBollingeBand);
         // exit if half way down to middle reached
-        MultiplierIndicator threshold = new MultiplierIndicator(d_middle_lower, 0.5d);
+        TransformIndicator threshold = TransformIndicator.multiply(d_middle_lower, 0.5d);
 
         Rule entrySignal = new CrossedDownIndicatorRule(new LowPriceIndicator(series), lowerBollingeBand); //LowestValueIndicator?
         Rule entrySignal2 = new OverIndicatorRule(new HighPriceIndicator(series), lowerBollingeBand);
@@ -54,7 +54,7 @@ public class SimpleRangeScalperStrategy {
 
         DifferenceIndicator d_upper_middle = new DifferenceIndicator(upperBollingerBand, middleBollingerBand);
         // exit if half way up to middle reached
-        MultiplierIndicator threshold = new MultiplierIndicator(d_upper_middle, Double.valueOf(0.5));
+        TransformIndicator threshold = TransformIndicator.multiply(d_upper_middle, 0.5);
 
         Rule entrySignal = new CrossedUpIndicatorRule(new HighPriceIndicator(series), upperBollingerBand);
         Rule entrySignal2 = new UnderIndicatorRule(new LowPriceIndicator(series), upperBollingerBand);

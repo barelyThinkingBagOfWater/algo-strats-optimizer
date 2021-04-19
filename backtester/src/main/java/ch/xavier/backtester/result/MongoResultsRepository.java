@@ -23,7 +23,7 @@ import java.util.Set;
 
 @Repository
 @Slf4j
-public class MongoResultsRepository implements AutoCloseable {
+public class MongoResultsRepository {
 
     private static final String DATABASE_NAME = "results";
 
@@ -83,7 +83,6 @@ public class MongoResultsRepository implements AutoCloseable {
 
 
     //MORE RESULTS CONSULTATION, IN NEW ARTIFACT LATER
-
     public Flux<String> listAllCollectionsName() {
         return template.getCollectionNames();
     }
@@ -105,10 +104,5 @@ public class MongoResultsRepository implements AutoCloseable {
         return getNBestValuesOfFieldInCollection(numberOfValues, fieldName, collectionName)
                 .flatMap(value -> template.find(new Query(Criteria.where(fieldName).is(value)), strategy.resultClassName(),
                         collectionName));
-    }
-
-    @Override
-    public void close() {
-        webclient.close();
     }
 }

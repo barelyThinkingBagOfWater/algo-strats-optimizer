@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BaseBar;
-import org.ta4j.core.num.PrecisionNum;
+import org.ta4j.core.num.DecimalNum;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -44,7 +44,7 @@ public class Quote {
             default -> throw new IllegalArgumentException("Quote type not yet implemented: " + type);
         }
 
-        return BaseBar.builder(PrecisionNum::valueOf, Number.class)
+        return BaseBar.builder(DecimalNum::valueOf, Number.class)
                 .timePeriod(Duration.ofMinutes(durationInMinutes))
                 .endTime(ZonedDateTime.ofInstant(
                         Instant.ofEpochSecond(this.timestamp),

@@ -15,9 +15,9 @@
     <description>Backtester of algo fin strats</description>
 
     <properties>
-        <java.version>14</java.version>
-        <ta4j.default_version>0.14-SNAPSHOT</ta4j.default_version>
-        <ta4j.version>0.14-xavier</ta4j.version>
+        <java.version>15</java.version>
+<!--        <ta4j.version>0.14-xavier</ta4j.version>-->
+        <ta4j.version>0.14-SNAPSHOT</ta4j.version>
     </properties>
 
     <dependencies>

@@ -9,8 +9,8 @@ import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.helpers.*;
-import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
+import org.ta4j.core.rules.OverIndicatorRule;
+import org.ta4j.core.rules.UnderIndicatorRule;
 
 import java.util.Map;
 
@@ -76,11 +76,11 @@ public class GlobalExtremaStrategy implements AnalyzableStrategy {
         LowestValueIndicator weekLowPrice = new LowestValueIndicator(lowPrices, numberOfBars);
 
         // Going long if the close price goes below the low price
-        MultiplierIndicator downWeek = new MultiplierIndicator(weekLowPrice, 1 + (double) rangeInPercent / 1000);
+        TransformIndicator downWeek = TransformIndicator.multiply(weekLowPrice, 1 + (double) rangeInPercent / 1000);
         Rule buyingRule = new UnderIndicatorRule(closePrices, downWeek);
 
         // Going short if the close price goes above the high price
-        MultiplierIndicator upWeek = new MultiplierIndicator(weekHighPrice, 1 - (double) rangeInPercent / 1000);
+        TransformIndicator upWeek = TransformIndicator.multiply(weekHighPrice, 1 - (double) rangeInPercent / 1000);
         Rule sellingRule = new OverIndicatorRule(closePrices, upWeek);
 
 

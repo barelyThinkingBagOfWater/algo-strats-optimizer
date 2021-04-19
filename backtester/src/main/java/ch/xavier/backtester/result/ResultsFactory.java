@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.*;
+import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -15,13 +16,13 @@ import reactor.core.scheduler.Schedulers;
 public class ResultsFactory {
 
     //Criterion
-    private static  final AverageProfitableTradesCriterion avgProfitTrades = new AverageProfitableTradesCriterion();
-    private static final AverageProfitCriterion avgProfit = new AverageProfitCriterion();
-    private static final TotalProfitCriterion totalProfit = new TotalProfitCriterion();
-    private static final BuyAndHoldCriterion buyAndHold = new BuyAndHoldCriterion();
-    private static final NumberOfTradesCriterion numTrades = new NumberOfTradesCriterion();
+    private static final WinningPositionsRatioCriterion avgProfitTrades = new WinningPositionsRatioCriterion();
+    private static final AverageReturnPerBarCriterion avgProfit = new AverageReturnPerBarCriterion();
+    private static final GrossReturnCriterion totalProfit = new GrossReturnCriterion();
+    private static final BuyAndHoldReturnCriterion buyAndHold = new BuyAndHoldReturnCriterion();
+    private static final NumberOfPositionsCriterion numTrades = new NumberOfPositionsCriterion();
     private static final VersusBuyAndHoldCriterion vsByAndHold = new VersusBuyAndHoldCriterion(avgProfit);
-    private static final RewardRiskRatioCriterion rewardRiskRatio = new RewardRiskRatioCriterion();
+    private static final ReturnOverMaxDrawdownCriterion rewardRiskRatio = new ReturnOverMaxDrawdownCriterion();
     private static final MaximumDrawdownCriterion maxDrawDown = new MaximumDrawdownCriterion();
 
 
@@ -78,9 +79,9 @@ public class ResultsFactory {
                                 .avgProfitTrades(avgProfitTrades.calculate(series, record).doubleValue())
                                 .avgProfit(avgProfit.calculate(series, record).doubleValue())
                                 .totalProfit(totalProfit.calculate(series, record).doubleValue())
-                                .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
+//                                .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
                                 .numTrades(numTrades.calculate(series, record).doubleValue())
-                                .vsByAndHold(vsByAndHold.calculate(series, record).doubleValue())
+//                                .vsByAndHold(vsByAndHold.calculate(series, record).doubleValue())
                                 .rewardRiskRatio(rewardRiskRatio.calculate(series, record).doubleValue())
                                 .maxDrawDown(maxDrawDown.calculate(series, record).doubleValue())
 

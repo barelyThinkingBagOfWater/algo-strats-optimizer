@@ -31,18 +31,26 @@ public class StrategiesAnalyzer {
     private final StrategiesFactory strategiesFactory;
 
     @Autowired
+    //TODO: Add constraints in annotations, like param1 > param2.
     public StrategiesAnalyzer(MongoQuotesRepository quotesRepository, MongoResultsRepository resultsRepository) {
         this.quotesRepository = quotesRepository;
         this.resultsRepository = resultsRepository;
         this.strategiesFactory = StrategiesFactory.INSTANCE;
 
-//        analyzeStrategyOnSymbolsWithQuotes(Flux.just("FB"), QuoteType.THIRTY_MIN, Strategies.MovingAveragesStrategy)
-        //TODO: Add constraints in annotations, like param1 > param2.
+//        analyzeStrategyOnSymbolsWithAllQuotes(Flux.just("FB"), Strategies.ADXStrategy)
 //        analyzeStrategyOnSymbolsWithQuotes(SymbolsRegistry.MOST_TRADED_US_SYMBOLS, QuoteType.ONE_MIN, Strategies.CCICorrectionStrategy)
-        analyzeStrategyOnSymbolsWithQuotes(SymbolsRegistry.MOST_TRADED_US_SYMBOLS, QuoteType.HOURLY, Strategies.ADXStrategy)
-                .blockLast();
+//        analyzeStrategyOnSymbolsWithQuotes(SymbolsRegistry.MOST_TRADED_US_SYMBOLS, QuoteType.HOURLY, Strategies.ADXStrategy)
+//                .blockLast();
     }
 
+    public Flux<StrategyResult> analyzeStrategyOnSymbolsWithAllQuotes(final Flux<String> symbols, final Strategies strategy) {
+        return analyzeStrategyOnSymbolsWithQuotes(symbols, QuoteType.DAILY, strategy)
+                .thenMany(analyzeStrategyOnSymbolsWithQuotes(symbols, QuoteType.HOURLY, strategy))
+                .thenMany(analyzeStrategyOnSymbolsWithQuotes(symbols, QuoteType.THIRTY_MIN, strategy))
+                .thenMany(analyzeStrategyOnSymbolsWithQuotes(symbols, QuoteType.FIFTEEN_MIN, strategy))
+                .thenMany(analyzeStrategyOnSymbolsWithQuotes(symbols, QuoteType.FIVE_MIN, strategy))
+                .thenMany(analyzeStrategyOnSymbolsWithQuotes(symbols, QuoteType.ONE_MIN, strategy));
+    }
 
     public Flux<StrategyResult> analyzeStrategyOnSymbolsWithQuotes(final Flux<String> symbols, final QuoteType quoteType,
                                                                    final Strategies strategy) {

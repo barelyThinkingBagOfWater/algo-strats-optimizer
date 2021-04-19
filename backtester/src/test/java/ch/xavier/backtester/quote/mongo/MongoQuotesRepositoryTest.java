@@ -22,8 +22,9 @@ class MongoQuotesRepositoryTest {
     public void test_with_quotes() {
         // WHEN
         repository.findAllBySymbol("FB", QuoteType.HOURLY)
-                .log()
-                .blockLast();
+                .count()
+                .doOnNext(count -> log.info("Count of FB hourly quotes in db:{}", count))
+                .block();
     }
 
 //    @Test
