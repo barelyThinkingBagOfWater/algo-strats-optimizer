@@ -5,18 +5,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.1.RELEASE</version>
+        <version>2.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ch.xavier</groupId>
     <artifactId>backtester</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>backtester</name>
-    <description>Backtester of algo fin strats</description>
 
     <properties>
-        <java.version>15</java.version>
-<!--        <ta4j.version>0.14-xavier</ta4j.version>-->
+        <java.version>16</java.version>
         <ta4j.version>0.14-SNAPSHOT</ta4j.version>
     </properties>
 
@@ -61,6 +58,7 @@
     </dependencies>
 
     <build>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

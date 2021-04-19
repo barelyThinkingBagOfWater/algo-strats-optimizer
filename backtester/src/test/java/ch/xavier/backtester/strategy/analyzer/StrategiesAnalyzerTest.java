@@ -28,16 +28,31 @@ class StrategiesAnalyzerTest {
 
 
     @Test
-    public void run_alltestStrategies_onFB() {
+    public void run_OneStrat_onFB_withOneQuote() {
         // GIVEN
         resultsRepository.dropCollection(TEST_COLLECTION_NAME).block();
 
         // WHEN
         analyzer.analyzeStrategyOnSymbolsWithQuotes(Flux.just("FB"), TEST_QUOTE_TYPE, TEST_STRATEGY)
-                .blockLast(); //60 variations * 82 symbols
+                .blockLast();
 
         // THEN
-//        assertEquals(4920, resultsRepository.countResultsInCollection(TEST_COLLECTION_NAME).block());
+//        assertEquals(4920, resultsRepository.countResultsInCollection(TEST_COLLECTION_NAME).block()); //60 variations * 82 symbols
+        assertEquals(60, resultsRepository.countSpecificResultsForSymbolInCollection("FB", TEST_COLLECTION_NAME).block());
+    }
+
+    @Test
+    public void run_OneStrat_onFB_withAllQuotes() {
+        // GIVEN
+        String testQuote = "FB";
+        Strategies testStrategy = Strategies.ADXStrategy;
+
+        // WHEN
+        analyzer.analyzeStrategyOnSymbolsWithAllQuotes(Flux.just(testQuote), testStrategy)
+                .blockLast();
+
+        // THEN
+//        assertEquals(4920, resultsRepository.countResultsInCollection(TEST_COLLECTION_NAME).block()); //60 variations * 82 symbols
         assertEquals(60, resultsRepository.countSpecificResultsForSymbolInCollection("FB", TEST_COLLECTION_NAME).block());
     }
 }

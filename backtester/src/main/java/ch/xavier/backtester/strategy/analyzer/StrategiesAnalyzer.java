@@ -97,6 +97,7 @@ public class StrategiesAnalyzer {
         return strategiesFactory
                 .generateAllVariations(analyzableStrategy, combinationsOfParametersToExclude)
                 .map(analyzableStrat -> analyzableStrat.buildStrategy(series))
+                //TODO: Doesn't seem to run multiple analysis on all threads, it runs one on a thread, then another on another thread, ... profile this
                 .publishOn(Schedulers.parallel())
                 .map(manager::run);
     }
@@ -137,22 +138,27 @@ public class StrategiesAnalyzer {
         public void run() {
             long startTimeMillis = System.currentTimeMillis();
 
-            Schedulers.newElastic("TheProgresser")
+            Schedulers.newBoundedElastic(12, Integer.MAX_VALUE, "TheProgresser")
                     .schedulePeriodically(() -> {
                         Long currentCount = resultsRepository.countResultsInCollection(collectionName).block() - initCount;
 
                         if (0 != currentCount) {
                             long currentProgress = (100 * currentCount) / totalCount;
-                            long elapsedTimeInSecond = (System.currentTimeMillis() - startTimeMillis) / 1000;
 
-                            String estimatedRemainingTimeInSecond = String.valueOf(
-                                    (int) (((double) totalCount / currentCount) * elapsedTimeInSecond) - elapsedTimeInSecond);
+                            if (currentProgress != 100) {
+                                long elapsedTimeInSecond = (System.currentTimeMillis() - startTimeMillis) / 1000;
 
-                            log.info("Analyzing {} variations of {} quotes\nProgress:{}%, elapsed seconds:{}, " +
-                                            "remaining strats:{}, remaining seconds:{}, rate:{} strats/sec \n",
-                                    totalCount, collectionName, currentProgress, elapsedTimeInSecond,
-                                    totalCount - currentCount, estimatedRemainingTimeInSecond,
-                                    doubleFormat.format((double) currentCount / elapsedTimeInSecond));
+                                String estimatedRemainingTimeInSecond = String.valueOf(
+                                        (int) (((double) totalCount / currentCount) * elapsedTimeInSecond) - elapsedTimeInSecond);
+
+                                log.info("""
+                                                Analyzing {} variations of {} quotes
+                                                Progress:{}%, elapsed seconds:{}, remaining strats:{}, remaining seconds:{}, rate:{} strats/sec\s
+                                                """,
+                                        totalCount, collectionName, currentProgress, elapsedTimeInSecond,
+                                        totalCount - currentCount, estimatedRemainingTimeInSecond,
+                                        doubleFormat.format((double) currentCount / elapsedTimeInSecond));
+                            }
                         }
                     }, 0, 5, TimeUnit.SECONDS);
         }
