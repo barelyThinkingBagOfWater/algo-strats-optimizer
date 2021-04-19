@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 import reactor.core.publisher.Flux;
 
 @SpringBootTest
-@TestPropertySource(properties = "mongodb.host=172.18.42.2")
+//@TestPropertySource(properties = "mongodb.host=172.18.42.2")
 @Slf4j
 class QuotesImporterTest {
 

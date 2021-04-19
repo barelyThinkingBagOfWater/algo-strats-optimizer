@@ -14,7 +14,7 @@ import java.net.URI;
  * Move this logic to FinnhubQuotesImporter?
  */
 @Slf4j
-@Component
+//@Component
 public class FinnhubRealTimeQuotesImporter implements AutoCloseable {
 
     private final static URI WSS_URI = URI.create(FinnhubUriFactory.getWssBaseUrl());

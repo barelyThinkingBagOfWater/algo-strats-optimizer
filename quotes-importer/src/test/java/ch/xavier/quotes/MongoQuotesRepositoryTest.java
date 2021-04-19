@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux;
 
 @SpringBootTest
 @Slf4j
-@TestPropertySource(properties = "mongodb.host=172.18.42.2")
+//@TestPropertySource(properties = "mongodb.host=172.18.42.2")
 class MongoQuotesRepositoryTest {
 
     @Autowired
