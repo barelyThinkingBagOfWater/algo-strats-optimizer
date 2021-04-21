@@ -18,6 +18,7 @@
 		<java.version>16</java.version>
 		<alpaca-java.version>7.1</alpaca-java.version>
 		<ta4j.version>0.14-SNAPSHOT</ta4j.version>
+		<akka.version>2.6.14</akka.version>
 	</properties>
 
 	<dependencies>
@@ -33,6 +34,19 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<!-- MONGO -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+		</dependency>
+
+		<!-- AKKA -->
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-actor-typed_2.13</artifactId>
+			<version>${akka.version}</version>
 		</dependency>
 
 		<!-- FINANCIAL LIBS -->

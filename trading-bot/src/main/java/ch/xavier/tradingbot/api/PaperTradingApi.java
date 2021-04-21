@@ -6,12 +6,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class paperTradingApi {
+public class PaperTradingApi {
 
     private final AlpacaAPI api;
 
-    public paperTradingApi() {
+    public PaperTradingApi() {
         this.api = new AlpacaAPI();
         //always throw AlpacaAPIRequestException if a problem occurs
+
+        //DOCS
+        //https://github.com/Petersoj/alpaca-java
+        //https://ta4j.github.io/ta4j-wiki/Live-trading.html
     }
 }

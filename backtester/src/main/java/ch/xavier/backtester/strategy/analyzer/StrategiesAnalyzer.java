@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
+//TODO: Rename me as a ResultsGenerator or something else, you don't analyze anything here
 public class StrategiesAnalyzer {
 
     private final MongoQuotesRepository quotesRepository;

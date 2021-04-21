@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.analysis.criteria.*;
-import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
+import org.ta4j.core.analysis.criteria.pnl.GrossProfitCriterion;
+import org.ta4j.core.analysis.criteria.pnl.NetProfitCriterion;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -16,14 +17,20 @@ import reactor.core.scheduler.Schedulers;
 public class ResultsFactory {
 
     //Criterion
-    private static final WinningPositionsRatioCriterion avgProfitTrades = new WinningPositionsRatioCriterion();
-    private static final AverageReturnPerBarCriterion avgProfit = new AverageReturnPerBarCriterion();
-    private static final GrossReturnCriterion totalProfit = new GrossReturnCriterion();
-    private static final BuyAndHoldReturnCriterion buyAndHold = new BuyAndHoldReturnCriterion();
     private static final NumberOfPositionsCriterion numTrades = new NumberOfPositionsCriterion();
-    private static final VersusBuyAndHoldCriterion vsByAndHold = new VersusBuyAndHoldCriterion(avgProfit);
-    private static final ReturnOverMaxDrawdownCriterion rewardRiskRatio = new ReturnOverMaxDrawdownCriterion();
+    private static final WinningPositionsRatioCriterion winningPositionsRatio = new WinningPositionsRatioCriterion();
+
+    private static final AverageReturnPerBarCriterion avgProfit = new AverageReturnPerBarCriterion();
+    private static final GrossProfitCriterion grossProfit = new GrossProfitCriterion();
+    private static final NetProfitCriterion netProfit = new NetProfitCriterion();
+
+    private static final BuyAndHoldReturnCriterion buyAndHold = new BuyAndHoldReturnCriterion();
+    private static final VersusBuyAndHoldCriterion avgProfitsvsByAndHold = new VersusBuyAndHoldCriterion(avgProfit);
+    private static final VersusBuyAndHoldCriterion netProfitsvsByAndHold = new VersusBuyAndHoldCriterion(netProfit);
+
     private static final MaximumDrawdownCriterion maxDrawDown = new MaximumDrawdownCriterion();
+    private static final ReturnOverMaxDrawdownCriterion returnOverMaxDrawdown = new ReturnOverMaxDrawdownCriterion();
+
 
 
     public static Flux<? extends StrategyResult> createStorableResultsForStrategy(Strategies strategy, BaseBarSeries series, Flux<TradingRecord> records, String symbol) {
@@ -44,13 +51,15 @@ public class ResultsFactory {
 
 
                                 //Criterion results
-                                .avgProfitTrades(avgProfitTrades.calculate(series, record).doubleValue())
+                                .winningPositionsRatio(winningPositionsRatio.calculate(series, record).doubleValue())
                                 .avgProfit(avgProfit.calculate(series, record).doubleValue())
-                                .totalProfit(totalProfit.calculate(series, record).doubleValue())
+                                .grossProfit(grossProfit.calculate(series, record).doubleValue())
+                                .netProfit(netProfit.calculate(series, record).doubleValue())
                                 .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
                                 .numTrades(numTrades.calculate(series, record).doubleValue())
-                                .vsByAndHold(vsByAndHold.calculate(series, record).doubleValue())
-                                .rewardRiskRatio(rewardRiskRatio.calculate(series, record).doubleValue())
+                                .avgProfitsvsByAndHold(avgProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .netProfitsvsByAndHold(netProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .returnOverMaxDrawdown(returnOverMaxDrawdown.calculate(series, record).doubleValue())
                                 .maxDrawDown(maxDrawDown.calculate(series, record).doubleValue())
 
                                 //Strategy parameters
@@ -76,13 +85,15 @@ public class ResultsFactory {
                                 .symbol(symbol)
 
                                 //Criterion results
-                                .avgProfitTrades(avgProfitTrades.calculate(series, record).doubleValue())
+                                .winningPositionsRatio(winningPositionsRatio.calculate(series, record).doubleValue())
                                 .avgProfit(avgProfit.calculate(series, record).doubleValue())
-                                .totalProfit(totalProfit.calculate(series, record).doubleValue())
-//                                .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
+                                .grossProfit(grossProfit.calculate(series, record).doubleValue())
+                                .netProfit(netProfit.calculate(series, record).doubleValue())
+                                .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
                                 .numTrades(numTrades.calculate(series, record).doubleValue())
-//                                .vsByAndHold(vsByAndHold.calculate(series, record).doubleValue())
-                                .rewardRiskRatio(rewardRiskRatio.calculate(series, record).doubleValue())
+                                .avgProfitsvsByAndHold(avgProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .netProfitsvsByAndHold(netProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .returnOverMaxDrawdown(returnOverMaxDrawdown.calculate(series, record).doubleValue())
                                 .maxDrawDown(maxDrawDown.calculate(series, record).doubleValue())
 
                                 //Strategy parameters
@@ -102,13 +113,15 @@ public class ResultsFactory {
                                 .symbol(symbol)
 
                                 //Criterion results
-                                .avgProfitTrades(avgProfitTrades.calculate(series, record).doubleValue())
+                                .winningPositionsRatio(winningPositionsRatio.calculate(series, record).doubleValue())
                                 .avgProfit(avgProfit.calculate(series, record).doubleValue())
-                                .totalProfit(totalProfit.calculate(series, record).doubleValue())
+                                .grossProfit(grossProfit.calculate(series, record).doubleValue())
+                                .netProfit(netProfit.calculate(series, record).doubleValue())
                                 .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
                                 .numTrades(numTrades.calculate(series, record).doubleValue())
-                                .vsByAndHold(vsByAndHold.calculate(series, record).doubleValue())
-                                .rewardRiskRatio(rewardRiskRatio.calculate(series, record).doubleValue())
+                                .avgProfitsvsByAndHold(avgProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .netProfitsvsByAndHold(netProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .returnOverMaxDrawdown(returnOverMaxDrawdown.calculate(series, record).doubleValue())
                                 .maxDrawDown(maxDrawDown.calculate(series, record).doubleValue())
 
                                 //Strategy parameters
@@ -131,13 +144,15 @@ public class ResultsFactory {
                                 .symbol(symbol)
 
                                 //Criterion results
-                                .avgProfitTrades(avgProfitTrades.calculate(series, record).doubleValue())
+                                .winningPositionsRatio(winningPositionsRatio.calculate(series, record).doubleValue())
                                 .avgProfit(avgProfit.calculate(series, record).doubleValue())
-                                .totalProfit(totalProfit.calculate(series, record).doubleValue())
+                                .grossProfit(grossProfit.calculate(series, record).doubleValue())
+                                .netProfit(netProfit.calculate(series, record).doubleValue())
                                 .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
                                 .numTrades(numTrades.calculate(series, record).doubleValue())
-                                .vsByAndHold(vsByAndHold.calculate(series, record).doubleValue())
-                                .rewardRiskRatio(rewardRiskRatio.calculate(series, record).doubleValue())
+                                .avgProfitsvsByAndHold(avgProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .netProfitsvsByAndHold(netProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .returnOverMaxDrawdown(returnOverMaxDrawdown.calculate(series, record).doubleValue())
                                 .maxDrawDown(maxDrawDown.calculate(series, record).doubleValue())
 
                                 //Strategy parameters
@@ -158,13 +173,15 @@ public class ResultsFactory {
                                 .symbol(symbol)
 
                                 //Criterion results
-                                .avgProfitTrades(avgProfitTrades.calculate(series, record).doubleValue())
+                                .winningPositionsRatio(winningPositionsRatio.calculate(series, record).doubleValue())
                                 .avgProfit(avgProfit.calculate(series, record).doubleValue())
-                                .totalProfit(totalProfit.calculate(series, record).doubleValue())
+                                .grossProfit(grossProfit.calculate(series, record).doubleValue())
+                                .netProfit(netProfit.calculate(series, record).doubleValue())
                                 .buyAndHold(buyAndHold.calculate(series, record).doubleValue())
                                 .numTrades(numTrades.calculate(series, record).doubleValue())
-                                .vsByAndHold(vsByAndHold.calculate(series, record).doubleValue())
-                                .rewardRiskRatio(rewardRiskRatio.calculate(series, record).doubleValue())
+                                .avgProfitsvsByAndHold(avgProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .netProfitsvsByAndHold(netProfitsvsByAndHold.calculate(series, record).doubleValue())
+                                .returnOverMaxDrawdown(returnOverMaxDrawdown.calculate(series, record).doubleValue())
                                 .maxDrawDown(maxDrawDown.calculate(series, record).doubleValue())
 
                                 //Strategy parameters

@@ -10,4 +10,7 @@ public class TradingBotApplication {
 		SpringApplication.run(TradingBotApplication.class, args);
 	}
 
+	//1. Create strategies with chosen parameters, including symbol
+	//2. Create listener and feed the bars to the relevant Runnable/what?
+
 }

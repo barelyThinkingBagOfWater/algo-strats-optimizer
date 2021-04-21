@@ -6,9 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import reactor.core.publisher.Flux;
 
-import java.util.*;
+import java.util.Comparator;
 
 @SpringBootTest
 @Slf4j
@@ -27,45 +26,34 @@ class MongoResultsRepositoryTest {
     }
 
     @Test
-    public void geResultsOfNBestValuesForFieldForStrategy() {
-        resultsRepository.geResultsOfNBestValuesForFieldForStrategy(
-                3, "avgProfitTrades", Strategies.GlobalExtremaStrategy, QuoteType.DAILY)
+    public void findBestStrategyForCriterion() {
+        // GIVEN
+        Strategies strategy = Strategies.GlobalExtremaStrategy;
+        String symbol = "FB";
+        //for now net profit as no commission on Apalca, check after the realism of this choice and which criterion
+        //to really use
+        String criterion = "netProfit";
+
+        // WHEN
+        resultsRepository.getBestParametersForStrategy(strategy, criterion)
+                .sort(Comparator.comparingDouble(StrategyResult::getNetProfit))
                 .doOnNext(result -> log.info("Result:{}", result))
                 .blockLast();
     }
 
     @Test
-    public void getExistingStrategiesParameters() {
+    public void findBestStrategyForCriterionForOneMinQuote() {
         // GIVEN
-        String TEST_COLLECTION_NAME = "GlobalExtremaStrategy - DAILY";
+        Strategies strategy = Strategies.GlobalExtremaStrategy;
+        String symbol = "FB";
+        //for now net profit as no commission on Apalca, check after the realism of this choice and which criterion
+        //to really use
+        String criterion = "avgProfit";
 
         // WHEN
-        Flux resultsParams = resultsRepository.getParametersOfAlreadyAnalyzedStrategies("FB", Strategies.GlobalExtremaStrategy, TEST_COLLECTION_NAME);
-
-        // THEN
-        resultsParams.doOnNext(result -> log.info("params:{}", result))
-                .blockLast();
-    }
-
-    @Test
-    public void geResultsOfNBestValuesForFieldForStrategy2() {
-        Strategies currentStrat = Strategies.ADXStrategy;
-        Map<QuoteType, List<StrategyResult>> bestResults = new HashMap<>();
-
-        log.info("Best results:{}", bestResults);
-
-//        resultsRepository.getNBestValuesOfFieldInCollection(
-//                3, "avgProfitTrades", Strategies.ADXStrategy, QuoteType.DAILY)
-//                .doOnNext(result -> log.info("Result:{}", result))
-//                .blockLast();
-    }
-
-    @Test
-    public void findBestStrategyOnAverageProfit() {
-        resultsRepository.listAllCollectionsName()
-                .flatMap(collection -> resultsRepository.getNBestValuesOfFieldInCollection(5, "avgProfit", collection))
-                .sort(Comparator.reverseOrder())
-                .doOnNext(value -> log.info("Value:{}", value))
+        resultsRepository.geResultsOfNBestValuesForFieldForStrategy(criterion, strategy, QuoteType.ONE_MIN)
+                .sort(Comparator.comparingDouble(StrategyResult::getAvgProfit))
+                .doOnNext(result -> log.info("Result:{}", result))
                 .blockLast();
     }
 }

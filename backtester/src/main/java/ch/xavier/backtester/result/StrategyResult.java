@@ -14,19 +14,23 @@ public abstract class StrategyResult {
     @Indexed
     private String symbol;
     @Indexed
-    private double avgProfitTrades;
+    private double winningPositionsRatio;
     @Indexed
     private double avgProfit;
     @Indexed
-    private double totalProfit;
+    private double grossProfit;
+    @Indexed
+    private Double netProfit;
     @Indexed
     private double buyAndHold;
     @Indexed
     private double numTrades;
     @Indexed
-    private double vsByAndHold;
+    private double avgProfitsvsByAndHold;
     @Indexed
-    private double rewardRiskRatio;
+    private double netProfitsvsByAndHold;
+    @Indexed
+    private double returnOverMaxDrawdown;
     @Indexed
     private double maxDrawDown;
 
@@ -38,13 +42,15 @@ public abstract class StrategyResult {
     public String toString() {
         return "StrategyResult{" +
                 "symbol='" + symbol + '\'' +
-                ", avgProfitTrades=" + avgProfitTrades +
+                ", avgProfitTrades=" + winningPositionsRatio +
                 ", avgProfit=" + avgProfit +
-                ", totalProfit=" + totalProfit +
+                ", grossProfit=" + grossProfit +
+                ", netProfit=" + netProfit +
                 ", buyAndHold=" + buyAndHold +
                 ", numTrades=" + numTrades +
-                ", vsByAndHold=" + vsByAndHold +
-                ", rewardRiskRatio=" + rewardRiskRatio +
+                ", avgProfitsvsByAndHold=" + avgProfitsvsByAndHold +
+                ", netProfitsvsByAndHold=" + netProfitsvsByAndHold +
+                ", returnOverMaxDrawdown=" + returnOverMaxDrawdown +
                 ", maxDrawDown=" + maxDrawDown +
                 ", strategyName='" + strategyName + '\'' +
                 '}';

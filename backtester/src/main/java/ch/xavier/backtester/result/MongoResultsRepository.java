@@ -88,21 +88,26 @@ public class MongoResultsRepository {
     }
 
 
-    public Flux<Double> getNBestValuesOfFieldInCollection(final int numberOfValues, final String fieldName,
-                                                          final String collectionName) {
+    private Flux<Double> getXBestValuesOfFieldInCollection(final String criterionName, final String collectionName) {
         return template
-                .findDistinct(new Query(), fieldName, collectionName, Double.class)
+                .findDistinct(new Query(), criterionName, collectionName, Double.class)
                 .filter(result -> !result.isNaN())
                 .sort(Comparator.reverseOrder())
-                .take(numberOfValues);
+                .take(3);
     }
 
-    public Flux<StrategyResult> geResultsOfNBestValuesForFieldForStrategy(final int numberOfValues, final String fieldName,
-                                                                          final Strategies strategy, final QuoteType quoteType) {
+    public Flux<StrategyResult> geResultsOfNBestValuesForFieldForStrategy(final String fieldName,
+                                                                           final Strategies strategy,
+                                                                           final QuoteType quoteType) {
         final String collectionName = strategy.name() + " - " + quoteType.name();
 
-        return getNBestValuesOfFieldInCollection(numberOfValues, fieldName, collectionName)
+        return getXBestValuesOfFieldInCollection(fieldName, collectionName)
                 .flatMap(value -> template.find(new Query(Criteria.where(fieldName).is(value)), strategy.resultClassName(),
                         collectionName));
+    }
+
+    public Flux<StrategyResult> getBestParametersForStrategy(final Strategies strategy, final String fieldName) {
+        return Flux.fromArray(QuoteType.values())
+                .flatMap(quoteType -> geResultsOfNBestValuesForFieldForStrategy(fieldName, strategy, quoteType));
     }
 }

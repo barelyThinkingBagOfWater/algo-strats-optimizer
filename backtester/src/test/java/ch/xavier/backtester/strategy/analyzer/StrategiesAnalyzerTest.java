@@ -28,31 +28,27 @@ class StrategiesAnalyzerTest {
 
 
     @Test
-    public void run_OneStrat_onFB_withOneQuote() {
+    public void run_OneStrat_onFB_withOneMinQuote() {
         // GIVEN
-        resultsRepository.dropCollection(TEST_COLLECTION_NAME).block();
+//        resultsRepository.dropCollection(TEST_COLLECTION_NAME).block();
+        QuoteType quoteType = QuoteType.ONE_MIN;
+        Strategies strat = Strategies.CCICorrectionStrategy;
 
         // WHEN
-        analyzer.analyzeStrategyOnSymbolsWithQuotes(Flux.just("FB"), TEST_QUOTE_TYPE, TEST_STRATEGY)
-                .blockLast();
+        analyzer.analyzeStrategyOnSymbolsWithQuotes(Flux.just("FB"), quoteType, strat).blockLast();
 
         // THEN
 //        assertEquals(4920, resultsRepository.countResultsInCollection(TEST_COLLECTION_NAME).block()); //60 variations * 82 symbols
-        assertEquals(60, resultsRepository.countSpecificResultsForSymbolInCollection("FB", TEST_COLLECTION_NAME).block());
+//        assertEquals(60, resultsRepository.countSpecificResultsForSymbolInCollection("FB", TEST_COLLECTION_NAME).block());
     }
 
     @Test
     public void run_OneStrat_onFB_withAllQuotes() {
         // GIVEN
         String testQuote = "FB";
-        Strategies testStrategy = Strategies.ADXStrategy;
+        Strategies testStrategy = Strategies.GlobalExtremaStrategy;
 
         // WHEN
-        analyzer.analyzeStrategyOnSymbolsWithAllQuotes(Flux.just(testQuote), testStrategy)
-                .blockLast();
-
-        // THEN
-//        assertEquals(4920, resultsRepository.countResultsInCollection(TEST_COLLECTION_NAME).block()); //60 variations * 82 symbols
-        assertEquals(60, resultsRepository.countSpecificResultsForSymbolInCollection("FB", TEST_COLLECTION_NAME).block());
+        analyzer.analyzeStrategyOnSymbolsWithAllQuotes(Flux.just(testQuote), testStrategy).blockLast();
     }
 }
