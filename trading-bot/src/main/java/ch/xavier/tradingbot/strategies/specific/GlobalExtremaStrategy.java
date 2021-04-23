@@ -9,6 +9,8 @@ import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 
+import java.util.Map;
+
 public record GlobalExtremaStrategy(int rangeInPercent,
                                     int numberOfBars) implements RunnableStrategy {
 
@@ -32,6 +34,19 @@ public record GlobalExtremaStrategy(int rangeInPercent,
         Rule sellingRule = new OverIndicatorRule(closePrices, upWeek);
 
 
-        return new BaseStrategy(this.getClass().getSimpleName(), buyingRule, sellingRule, 0);
+        return new BaseStrategy(this.getClass().getSimpleName(), getStrategyParameters(), buyingRule, sellingRule, 0);
+    }
+
+    @Override
+    public String getNameForActor() {
+        return "GlobalExtremaStrategy_rangeInPercent:" + rangeInPercent + "_numberOfBars:" + numberOfBars;
+    }
+
+    @Override
+    public Map<String, String> getStrategyParameters() {
+        return Map.of(
+                "rangeInPercent", String.valueOf(rangeInPercent),
+                "numberOfBars", String.valueOf(numberOfBars)
+        );
     }
 }

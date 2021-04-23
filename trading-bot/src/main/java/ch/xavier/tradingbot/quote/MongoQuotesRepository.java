@@ -55,7 +55,6 @@ public class MongoQuotesRepository {
         return template.count(new Query(), quoteType);
     }
 
-
     public Flux<String> getAllStoredSymbols(QuoteType quoteType) {
         return template.findDistinct("symbol", quoteType.getQuoteClass(), String.class);
     }

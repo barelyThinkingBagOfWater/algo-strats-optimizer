@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
-//TODO: Rename me as a ResultsGenerator or something else, you don't analyze anything here
+//TODO: Rename me as a ResultsGenerator or something else, you don't analyze anything here. You still create results though
 public class StrategiesAnalyzer {
 
     private final MongoQuotesRepository quotesRepository;
@@ -32,7 +32,7 @@ public class StrategiesAnalyzer {
     private final StrategiesFactory strategiesFactory;
 
     @Autowired
-    //TODO: Add constraints in annotations, like param1 > param2.
+    //TODO: Add constraints in annotations, like param1 > param2. Or rather use a proper alpha-beta pruning algo
     public StrategiesAnalyzer(MongoQuotesRepository quotesRepository, MongoResultsRepository resultsRepository) {
         this.quotesRepository = quotesRepository;
         this.resultsRepository = resultsRepository;

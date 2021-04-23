@@ -1,21 +1,24 @@
 package ch.xavier.tradingbot.api;
 
-import lombok.extern.slf4j.Slf4j;
 import net.jacobpeterson.alpaca.AlpacaAPI;
-import org.springframework.stereotype.Component;
+import net.jacobpeterson.alpaca.enums.api.DataAPIType;
+import net.jacobpeterson.alpaca.enums.api.EndpointAPIType;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Component
-@Slf4j
+@Configuration
 public class PaperTradingApi {
 
-    private final AlpacaAPI api;
-
-    public PaperTradingApi() {
-        this.api = new AlpacaAPI();
-        //always throw AlpacaAPIRequestException if a problem occurs
+    @Bean
+    public AlpacaAPI api() { //cannot read alpaca.properties anymore? Akka must interfere with something.
+        return new AlpacaAPI(
+                "PK9SHVCP9L3OVBASJOIW",
+                "KO0kfGze9SzpeP6XMnqru58ZpH92e3PijkYUV5F3",
+                EndpointAPIType.PAPER,
+                DataAPIType.IEX);
+    }
 
         //DOCS
         //https://github.com/Petersoj/alpaca-java
         //https://ta4j.github.io/ta4j-wiki/Live-trading.html
-    }
 }
