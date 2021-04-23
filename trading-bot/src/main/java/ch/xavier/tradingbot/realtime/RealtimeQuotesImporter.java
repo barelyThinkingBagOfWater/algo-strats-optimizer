@@ -1,11 +1,14 @@
 package ch.xavier.tradingbot.realtime;
 
+import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.PostStop;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import akka.actor.typed.pubsub.Topic;
+import ch.xavier.tradingbot.strategies.RunningStrategyActor;
 import net.jacobpeterson.abstracts.websocket.exception.WebsocketException;
 import net.jacobpeterson.alpaca.AlpacaAPI;
 import net.jacobpeterson.alpaca.websocket.marketdata.listener.MarketDataListener;
@@ -13,7 +16,10 @@ import net.jacobpeterson.alpaca.websocket.marketdata.listener.MarketDataListener
 import net.jacobpeterson.alpaca.websocket.marketdata.message.MarketDataMessageType;
 import net.jacobpeterson.domain.alpaca.marketdata.realtime.MarketDataMessage;
 import net.jacobpeterson.domain.alpaca.marketdata.realtime.bar.BarMessage;
+import org.ta4j.core.BaseBar;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +27,13 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
 
     private final Map<String, MarketDataListener> realtimeQuotesImporters = new HashMap<>();
     private static AlpacaAPI api;
+    private static  ActorRef<Topic.Command<NewBarMessage>> topicRef;
 
 
-    public static Behavior<WatchSymbolMessage> create(AlpacaAPI alpacaAPI) {
+    public static Behavior<WatchSymbolMessage> create(AlpacaAPI alpacaAPI, ActorRef<Topic.Command<NewBarMessage>> newQuotesTopicActorRef) {
         api = alpacaAPI;
+        topicRef = newQuotesTopicActorRef;
+
         return Behaviors.setup(RealtimeQuotesImporter::new);
     }
 
@@ -61,6 +70,7 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
                 }
             }
         };
+
         realtimeQuotesImporters.put(message.symbol(), listenerTSLA);
 
         try {
@@ -73,7 +83,7 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
         return this;
     }
 
-    private Behavior<WatchSymbolMessage> onPostStop() {
+    private Behavior<WatchSymbolMessage> onPostStop() { //Test me in real conditions
         getContext().getSystem().log().info("Stopping quotesImporter, {} listeners to stop", realtimeQuotesImporters.size());
 
         realtimeQuotesImporters.forEach((symbol, listener) -> {

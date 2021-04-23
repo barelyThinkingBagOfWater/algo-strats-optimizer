@@ -36,13 +36,20 @@ public class RunningStrategyActor extends AbstractBehavior<NewBarMessage> {
     private Behavior<NewBarMessage> onReceive(NewBarMessage message) {
         getContext().getLog().info("Received message:{}", message);
 
-        series.addBar(message.bar());
-        int endIndex = series.getEndIndex();
+        if (series.getName().equals(message.symbol())) {
+            getContext().getLog().info("Matching symbol, processing it");
+            getContext().getLog().info("Current size before add:{} with params:{}", series.getBarCount(), strategy.getParameters());
+            series.addBar(message.bar());
+            getContext().getLog().info("Current size after add:{} with params:{}", series.getBarCount(), strategy.getParameters());
+            int endIndex = series.getEndIndex();
 
-        if (strategy.shouldEnter(endIndex)) {
-            getContext().getLog().info("strategy should enter, buying stock");
-        } else if (strategy.shouldExit(endIndex)) {
-            getContext().getLog().info("strategy should exit, selling stock");
+            if (strategy.shouldEnter(endIndex)) {
+                getContext().getLog().info("strategy should enter, buying stock");
+            } else if (strategy.shouldExit(endIndex)) {
+                getContext().getLog().info("strategy should exit, selling stock");
+            }
+        } else {
+            getContext().getLog().info("Symbol doesn't match the current strategy, ignoring message");
         }
 
         return this;
