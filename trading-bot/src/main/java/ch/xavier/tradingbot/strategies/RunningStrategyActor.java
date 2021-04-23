@@ -5,22 +5,29 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import ch.xavier.tradingbot.quote.MongoQuotesRepository;
+import ch.xavier.tradingbot.quote.Quote;
+import ch.xavier.tradingbot.quote.typed.QuoteType;
 import ch.xavier.tradingbot.realtime.NewBarMessage;
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.BaseBarSeries;
+import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Strategy;
 
 public class RunningStrategyActor extends AbstractBehavior<NewBarMessage> {
 
     private final Strategy strategy;
     private final BarSeries series;
+    private static MongoQuotesRepository quotesRepository;
 
-    public static Behavior<NewBarMessage> create(RunnableStrategy strategy, BarSeries series) {
-        return Behaviors.setup(context -> new RunningStrategyActor(context, strategy, series));
+    public static Behavior<NewBarMessage> create(RunnableStrategy strategy, MongoQuotesRepository repository) {
+        quotesRepository = repository;
+        return Behaviors.setup(context -> new RunningStrategyActor(context, strategy));
     }
 
-    private RunningStrategyActor(ActorContext<NewBarMessage> context, RunnableStrategy runnableStrategy, BarSeries series) {
+    private RunningStrategyActor(ActorContext<NewBarMessage> context, RunnableStrategy runnableStrategy) {
         super(context);
-        this.series = series;
+        this.series = fetchSeries("FB");
         this.strategy = runnableStrategy.buildStrategy(series);
 
         getContext().getLog().info("Strategy:{} with parameters:{} is running in dedicated actor for symbol:{}",
@@ -37,10 +44,7 @@ public class RunningStrategyActor extends AbstractBehavior<NewBarMessage> {
         getContext().getLog().info("Received message:{}", message);
 
         if (series.getName().equals(message.symbol())) {
-            getContext().getLog().info("Matching symbol, processing it");
-            getContext().getLog().info("Current size before add:{} with params:{}", series.getBarCount(), strategy.getParameters());
             series.addBar(message.bar());
-            getContext().getLog().info("Current size after add:{} with params:{}", series.getBarCount(), strategy.getParameters());
             int endIndex = series.getEndIndex();
 
             if (strategy.shouldEnter(endIndex)) {
@@ -53,5 +57,18 @@ public class RunningStrategyActor extends AbstractBehavior<NewBarMessage> {
         }
 
         return this;
+    }
+
+    public BarSeries fetchSeries(String symbol) {
+        final BaseBarSeries series = new BaseBarSeriesBuilder().withName(symbol).build();
+        quotesRepository
+                .findAllBySymbol(symbol, QuoteType.ONE_MIN)
+                .map(Quote::toBar)
+                .doOnNext(series::addBar)
+                .blockLast();
+
+//        series.setMaximumBarCount(); to avoid maxMemoryError, set me correctly
+
+        return series;
     }
 }
