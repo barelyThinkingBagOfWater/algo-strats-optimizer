@@ -49,4 +49,9 @@ public record GlobalExtremaStrategy(int rangeInPercent,
                 "numberOfBars", String.valueOf(numberOfBars)
         );
     }
+
+    @Override
+    public int getNumberOfQuotesUsedByStrategy() {
+        return numberOfBars;
+    }
 }

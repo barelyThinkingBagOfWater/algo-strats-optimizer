@@ -11,4 +11,6 @@ public interface RunnableStrategy {
     String getNameForActor();
 
     Map<String, String> getStrategyParameters();
+
+    int getNumberOfQuotesUsedByStrategy();
 }

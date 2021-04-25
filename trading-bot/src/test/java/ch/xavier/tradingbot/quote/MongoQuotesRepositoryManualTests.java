@@ -14,7 +14,7 @@ import java.util.List;
 //@TestPropertySource(properties = "mongodb.host=172.18.42.2")
 @Slf4j
 @Disabled
-class MongoQuotesRepositoryTest {
+class MongoQuotesRepositoryManualTests {
 
     @Autowired
     private MongoQuotesRepository repository;
@@ -38,6 +38,16 @@ class MongoQuotesRepositoryTest {
                 .doOnNext(count -> log.info("Count of FB hourly quotes in db since 1st January 2020:{}", count))
                 .block();
     }
+
+    @Test
+    public void test_with_most_recent_quotes() {
+        // WHEN
+        repository.findMostRecentForSymbol("FB", QuoteType.FIVE_MIN, 5)
+                .count()
+                .doOnNext(count -> log.info("Count of FB most recent hourly quotes in db that should be 5:{}", count))
+                .block();
+    }
+
 
     @Test
     public void getAllSymbols_returnsAllSymbol() {

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PaperTradingApi {
+public class TradingApisConfiguration {
 
     @Bean
     public AlpacaAPI api() { //cannot read alpaca.properties anymore? Akka must interfere with something.

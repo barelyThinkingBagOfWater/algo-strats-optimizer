@@ -51,6 +51,15 @@ public class MongoQuotesRepository {
         return template.find(query, quoteType.getQuoteClass());
     }
 
+    public Flux<? extends Quote> findMostRecentForSymbol(final String symbol, QuoteType quoteType, int numberOfQuotes) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("symbol").is(symbol));
+        query.with(Sort.by(Sort.Direction.ASC, "timestamp"));
+        query.limit(numberOfQuotes);
+
+        return template.find(query, quoteType.getQuoteClass());
+    }
+
     public Mono<Long> count(final Class<? extends Quote> quoteType) {
         return template.count(new Query(), quoteType);
     }
