@@ -1,1 +1,1 @@
-docker build -t algo-mongo-prepared . && docker run --rm -d --name mongo-service --network isolatedNetwork -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=toor -e MONGO_INITDB_DATABASE=movies -p 27017:27017 -v /data/algo-mongo:/data/db algo-mongo-prepared
+docker build -t algo-mongo-prepared . && docker run --rm -d --name mongo --network isolatedNetwork -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=toor -e MONGO_INITDB_DATABASE=movies -p 27017:27017 -v /data/algo-mongo:/data/db algo-mongo-prepared

@@ -48,7 +48,7 @@ public class ActorsInitializer {
                     quotesImporterActorRef =
                             context.spawn(RealtimeQuotesImporter.create(api, newQuotesTopicActorRef), "realTimeQuotesImporter");
 
-                    context.getLog().info("Initializing importer for symbols");
+                    context.getLog().info("Initializing importers for symbols");
                     initializeImporterForSymbol("FB");
 
                     context.getLog().info("Creating running strategies actors");

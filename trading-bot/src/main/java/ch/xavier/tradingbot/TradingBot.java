@@ -3,17 +3,15 @@ package ch.xavier.tradingbot;
 import akka.actor.typed.ActorSystem;
 import ch.xavier.tradingbot.quote.MongoQuotesRepository;
 import ch.xavier.tradingbot.strategies.ActorsInitializer;
-import lombok.extern.slf4j.Slf4j;
 import net.jacobpeterson.alpaca.AlpacaAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
 public class TradingBot {
 
     @Autowired
-    public TradingBot(MongoQuotesRepository repository, AlpacaAPI api) {
-        ActorSystem.create(ActorsInitializer.create(repository, api), "strategiesInitializer");
+    public TradingBot(MongoQuotesRepository quotesRepository, AlpacaAPI tradingApi) {
+        ActorSystem.create(ActorsInitializer.create(quotesRepository, tradingApi), "ActorsInitializer");
     }
 }
