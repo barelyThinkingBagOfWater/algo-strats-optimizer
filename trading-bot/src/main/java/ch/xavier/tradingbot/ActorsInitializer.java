@@ -1,4 +1,4 @@
-package ch.xavier.tradingbot.strategies;
+package ch.xavier.tradingbot;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
@@ -14,63 +14,49 @@ import ch.xavier.tradingbot.quote.typed.QuoteType;
 import ch.xavier.tradingbot.realtime.NewBarMessage;
 import ch.xavier.tradingbot.realtime.RealtimeQuotesImporter;
 import ch.xavier.tradingbot.realtime.WatchSymbolMessage;
+import ch.xavier.tradingbot.strategies.RunningStrategyActor;
 import ch.xavier.tradingbot.strategies.specific.GlobalExtremaStrategy;
 import net.jacobpeterson.alpaca.AlpacaAPI;
-import org.ta4j.core.Bar;
-import org.ta4j.core.BaseBar;
-import org.ta4j.core.BaseBarSeries;
-import org.ta4j.core.BaseBarSeriesBuilder;
+import org.ta4j.core.*;
 
+import java.sql.Array;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActorsInitializer {
 
     private static ActorRef<WatchSymbolMessage> quotesImporterActorRef;
     private static ActorRef<CreateOrderMessage> tradingApiActorRef;
     private static ActorRef<Topic.Command<NewBarMessage>> newQuotesTopicActorRef;
+    private static final List<GlobalExtremaStrategy> strategies = new ArrayList<>();
 
 
     public static Behavior<Void> create(MongoQuotesRepository repository, AlpacaAPI api) {
 
-        GlobalExtremaStrategy strategy1 = new GlobalExtremaStrategy(7, 7);
-        GlobalExtremaStrategy strategy2 = new GlobalExtremaStrategy(7, 2016);
+        strategies.add(new GlobalExtremaStrategy(7, 7));
+        strategies.add(new GlobalExtremaStrategy(7, 2016));
 
         return Behaviors.setup(
                 context -> {
                     context.getLog().info("Creating actor for trading api");
                     tradingApiActorRef = context.spawn(AlpacaApiActor.create(api), "alpacaTradingApi");
 
+
                     context.getLog().info("Creating importer of realtime quotes and the pub/sub topic to propagate them");
                     //You could have one topic per symbol
                     newQuotesTopicActorRef = context.spawn(Topic.create(NewBarMessage.class, "realtimeQuoteTopic"),
                                     "realtimeQuoteTopic");
-                    quotesImporterActorRef =
-                            context.spawn(RealtimeQuotesImporter.create(api, newQuotesTopicActorRef), "realTimeQuotesImporter");
+                    quotesImporterActorRef = context.spawn(RealtimeQuotesImporter.create(api, newQuotesTopicActorRef),
+                            "realTimeQuotesImporter");
+
 
                     context.getLog().info("Initializing importers for symbols");
                     initializeImporterForSymbol("FB");
 
                     context.getLog().info("Creating running strategies actors");
-                    runStrategyOnSymbol(strategy1, repository, context);
-                    runStrategyOnSymbol(strategy2, repository, context);
-
-                    Thread.sleep(5000);
-
-                    //TEMP TEST, REMOVE ME LATER
-                    context.getLog().info("Sending fake message to running strats actors");
-                    final BaseBarSeries series = new BaseBarSeriesBuilder().withName("FB").build();
-                    repository
-                            .findAllBySymbol("FB", QuoteType.ONE_MIN)
-                            .map(Quote::toBar)
-                            .doOnNext(series::addBar)
-                            .blockLast();
-                    Bar tempBar = series.getLastBar();
-                    BaseBar baseBar = new BaseBar(Duration.ofMinutes(1), ZonedDateTime.now(), tempBar.getOpenPrice(),
-                            tempBar.getHighPrice(), tempBar.getLowPrice(), tempBar.getClosePrice(), tempBar.getVolume(),
-                            tempBar.getAmount());
-                    newQuotesTopicActorRef.tell(Topic.publish(new NewBarMessage(baseBar, "FB")));
-
+                    strategies.forEach(strat -> runStrategyOnSymbol(strat, repository, context));
 
                     return Behaviors.receive(Void.class)
                             .onSignal(Terminated.class, sig -> Behaviors.stopped())

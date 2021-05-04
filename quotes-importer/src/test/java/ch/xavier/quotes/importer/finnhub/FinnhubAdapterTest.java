@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
 @Slf4j
-class FinnhubQuotesImporterTest {
+class FinnhubAdapterTest {
 
-    private FinnhubQuotesImporter importer;
+    private FinnhubAdapter adapter;
 
     @BeforeEach
     public void setUp() {
-        importer = new FinnhubQuotesImporter();
+        adapter = new FinnhubAdapter();
     }
 
     @Test
@@ -23,7 +23,7 @@ class FinnhubQuotesImporterTest {
         String testSymbol = "FB";
 
         // WHEN
-        Long count = importer.getQuotes(Flux.just(testSymbol), QuoteType.DAILY).count().block();
+        Long count = adapter.getQuotes(Flux.just(testSymbol), QuoteType.DAILY).count().block();
 
         // THEN
         Assertions.assertEquals(1944, count);
@@ -35,7 +35,7 @@ class FinnhubQuotesImporterTest {
         String testSymbol = "FB";
 
         // WHEN
-        Long count = importer.getQuotes(Flux.just(testSymbol), QuoteType.FIVE_MIN).count().block();
+        Long count = adapter.getQuotes(Flux.just(testSymbol), QuoteType.FIVE_MIN).count().block();
 
         // THEN
         Assertions.assertEquals(13923, count);

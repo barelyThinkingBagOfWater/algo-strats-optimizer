@@ -12,8 +12,8 @@ public class TradingApisConfiguration {
     @Bean
     public AlpacaAPI api() { //cannot read alpaca.properties anymore? Akka must interfere with something.
         return new AlpacaAPI(
-                "PK9SHVCP9L3OVBASJOIW",
-                "KO0kfGze9SzpeP6XMnqru58ZpH92e3PijkYUV5F3",
+                "PK6GUN1VQJBJDSANE6Z5",
+                "0NN9gunuCZSV0HXcZJpgTadK6Psekd3IMD1tAs0N",
                 EndpointAPIType.PAPER,
                 DataAPIType.IEX);
     }

@@ -20,11 +20,13 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
-//TODO: Rename me as a ResultsGenerator or something else, you don't analyze anything here. You still create results though
 public class StrategiesAnalyzer {
 
     private final MongoQuotesRepository quotesRepository;
@@ -65,7 +67,7 @@ public class StrategiesAnalyzer {
                         .flatMap(symbol -> analyzeStrategyOnSymbolWithQuotes(symbol, quoteType, strategy, collectionName)))
                 .doOnComplete(() -> {
                     log.info("Analyze done for {}, have a great day!", collectionName);
-                    Schedulers.elastic().dispose();
+                    Schedulers.boundedElastic().dispose();
                 });
     }
 
@@ -98,8 +100,7 @@ public class StrategiesAnalyzer {
         return strategiesFactory
                 .generateAllVariations(analyzableStrategy, combinationsOfParametersToExclude)
                 .map(analyzableStrat -> analyzableStrat.buildStrategy(series))
-                //TODO: Doesn't seem to run multiple analysis on all threads, it runs one on a thread, then another on another thread, ... profile this
-                .publishOn(Schedulers.parallel())
+//                .publishOn(Schedulers.parallel())
                 .map(manager::run);
     }
 
@@ -116,11 +117,11 @@ public class StrategiesAnalyzer {
 
     private Mono displayProgressDetails(Mono<Long> multiplier, Strategies strategy, MongoResultsRepository resultsRepository, String collectionName) {
         return Mono.fromRunnable(new ProgressDetailsRunnable(strategy.variationsCountPerSymbol() * multiplier.block(), collectionName, resultsRepository))
-                .subscribeOn(Schedulers.elastic());
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private static class ProgressDetailsRunnable implements Runnable {
 
+    private static class ProgressDetailsRunnable implements Runnable {
         private final long totalCount;
         private final long initCount;
         private final String collectionName;

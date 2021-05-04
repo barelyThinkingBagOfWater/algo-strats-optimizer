@@ -44,7 +44,6 @@ public class ResultsFactory {
 
     private static Flux<MovingMomentumStrategyResult> createMovingMomentumStrategyResults(BaseBarSeries series, Flux<TradingRecord> records) {
         return records
-                .publishOn(Schedulers.parallel())
                 .map(record ->
                         MovingMomentumStrategyResult.builder()
                                 .strategyName(record.getCurrentStrategyName())
@@ -78,7 +77,6 @@ public class ResultsFactory {
 
     private static Flux<GlobalExtremaStrategyResult> createGlobalExtremaResults(BaseBarSeries series, Flux<TradingRecord> records, String symbol) {
         return records
-                .publishOn(Schedulers.parallel())
                 .map(record ->
                         GlobalExtremaStrategyResult.builder()
                                 .strategyName(record.getCurrentStrategyName())
@@ -106,7 +104,6 @@ public class ResultsFactory {
 
     private static Flux<MovingAveragesStrategyResult> createMovingAverageStrategyResults(BaseBarSeries series, Flux<TradingRecord> records, String symbol) {
         return records
-                .publishOn(Schedulers.parallel())
                 .map(record ->
                         MovingAveragesStrategyResult.builder()
                                 .strategyName(record.getCurrentStrategyName())
@@ -137,7 +134,6 @@ public class ResultsFactory {
 
     private static Flux<AdxStrategyResult> createAdxStrategyResults(BaseBarSeries series, Flux<TradingRecord> records, String symbol) {
         return records
-                .publishOn(Schedulers.parallel())
                 .map(record ->
                         AdxStrategyResult.builder()
                                 .strategyName(record.getCurrentStrategyName())
@@ -166,7 +162,6 @@ public class ResultsFactory {
 
     private static Flux<CciCorrectionsStrategyResult> createCciCorrectionsResults(BaseBarSeries series, Flux<TradingRecord> records, String symbol) {
         return records
-                .publishOn(Schedulers.parallel())
                 .map(record ->
                         CciCorrectionsStrategyResult.builder()
                                 .strategyName(record.getCurrentStrategyName())

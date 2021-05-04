@@ -1,10 +1,10 @@
-package ch.xavier.quotes.importer.config;
+package ch.xavier.quotes.importer;
 
 import reactor.core.publisher.Flux;
 
-public final class GeneralConfig {
+public final class SymbolsRegistry {
 
-    private GeneralConfig() { }
+    private SymbolsRegistry() { }
 
     /**
      * From https://www.marketwatch.com/tools/screener?exchange=Nyse&report=MostActive

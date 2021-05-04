@@ -57,7 +57,7 @@ public class BarSeriesManager {
 
     /**
      * Constructor.
-     * 
+     *
      * @param barSeries the bar series to be managed
      */
     public BarSeriesManager(BarSeries barSeries) {
@@ -66,7 +66,7 @@ public class BarSeriesManager {
 
     /**
      * Constructor.
-     * 
+     *
      * @param barSeries            the bar series to be managed
      * @param transactionCostModel the cost model for transactions of the asset
      * @param holdingCostModel     the cost model for holding asset (e.g. borrowing)
@@ -95,7 +95,7 @@ public class BarSeriesManager {
      * Runs the provided strategy over the managed series.
      *
      * Opens the position with a {@link TradeType} BUY trade.
-     * 
+     *
      * @return the trading record coming from the run
      */
     public TradingRecord run(Strategy strategy) {
@@ -107,7 +107,7 @@ public class BarSeriesManager {
      * finishIndex).
      *
      * Opens the position with a {@link TradeType} BUY trade.
-     * 
+     *
      * @param strategy    the trading strategy
      * @param startIndex  the start index for the run (included)
      * @param finishIndex the finish index for the run (included)
@@ -121,7 +121,7 @@ public class BarSeriesManager {
      * Runs the provided strategy over the managed series.
      *
      * Opens the position with a trade of {@link TradeType tradeType}.
-     * 
+     *
      * @param strategy  the trading strategy
      * @param tradeType the {@link TradeType} used to open the position
      * @return the trading record coming from the run
@@ -135,7 +135,7 @@ public class BarSeriesManager {
      * finishIndex).
      *
      * Opens the position with a trade of {@link TradeType tradeType}.
-     * 
+     *
      * @param strategy    the trading strategy
      * @param tradeType   the {@link TradeType} used to open the position
      * @param startIndex  the start index for the run (included)
@@ -177,12 +177,15 @@ public class BarSeriesManager {
         log.trace("Running strategy (indexes: {} -> {}): {} (starting with {})", runBeginIndex, runEndIndex, strategy,
                 tradeType);
         TradingRecord tradingRecord = new BaseTradingRecord(tradeType, transactionCostModel, holdingCostModel);
+
+
         for (int i = runBeginIndex; i <= runEndIndex; i++) {
             // For each bar between both indexes...
             if (strategy.shouldOperate(i, tradingRecord)) {
                 tradingRecord.operate(i, barSeries.getBar(i).getClosePrice(), amount);
             }
         }
+
 
         if (!tradingRecord.isClosed()) {
             // If the last position is still opened, we search out of the run end index.
@@ -204,5 +207,4 @@ public class BarSeriesManager {
 
         return tradingRecord;
     }
-
 }

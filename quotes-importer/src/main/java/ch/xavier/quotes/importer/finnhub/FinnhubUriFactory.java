@@ -18,16 +18,19 @@ public class FinnhubUriFactory {
 
     //External conf/secrets
     private static final String TOKEN = "brotd4vrh5r8qo23fdmg"; //Hello Github!
-    private static final int EARLIEST_YEAR_FOR_QUOTES = 2012;
-    private static final String REST_BASE_URL = "https://finnhub.io/api/v1/stock/candle";
+    private static final String REST_BASE_URL = "https://finnhub.io/api/v1/";
+    private static final String STOCK_CANDLE_URL = "stock/candle";
+    private static final String CRYPTO_CANDLE_URL = "crypto/candle";
     private static final String WSS_BASE_URL = "wss://ws.finnhub.io?token=";
 
+    private static final int EARLIEST_YEAR_FOR_QUOTES = 2012;
     private static final String DAILY_DURATION = "D";
     private static final String FIVE_MIN_DURATION = "5";
     private static final String ONE_MIN_DURATION = "1";
     private static final String FIFTEEN_MIN_DURATION = "15";
     private static final String THIRTY_MIN_DURATION = "30";
     private static final String ONE_HOUR_DURATION = "60";
+    private static final String CRYPTO_PREFIX_SYMBOL = "BINANCE";
 
     private static final long DAILY_INTERVAL = 243_734_400; //slightly less than 8 years
     private static final long COMMON_INTERVAL = 15_500_000;
@@ -76,11 +79,13 @@ public class FinnhubUriFactory {
     }
 
     private static String getURIForQuotes(final String symbol, final String duration, final long from, final long to) {
-        return "?symbol=" + symbol + "&resolution=" + duration + "&from="
+        String uri= (symbol.startsWith(CRYPTO_PREFIX_SYMBOL)) ? CRYPTO_CANDLE_URL : STOCK_CANDLE_URL;
+
+        return uri + "?symbol=" + symbol + "&resolution=" + duration + "&from="
                 + from + "&to=" + to + "&token=" + TOKEN;
     }
 
-    public static String getRestBaseUrl() {
+    public static String getRestBaseStockUrl() {
         return REST_BASE_URL;
     }
 

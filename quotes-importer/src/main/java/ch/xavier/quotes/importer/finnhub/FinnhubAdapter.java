@@ -12,7 +12,7 @@ import java.time.Duration;
 
 @Component
 @Slf4j
-public class FinnhubQuotesImporter {
+public class FinnhubAdapter {
 
     private final WebClient webClient;
 
@@ -20,9 +20,9 @@ public class FinnhubQuotesImporter {
     private static final int SIXTEEN_MB_BUFFER = 16 * 1024 * 1024;
 
 
-    public FinnhubQuotesImporter() {
+    public FinnhubAdapter() {
         webClient = WebClient.builder()
-                .baseUrl(FinnhubUriFactory.getRestBaseUrl())
+                .baseUrl(FinnhubUriFactory.getRestBaseStockUrl())
                 .exchangeStrategies(ExchangeStrategies.builder()
                         .codecs(configurer -> configurer
                                 .defaultCodecs()
@@ -41,12 +41,11 @@ public class FinnhubQuotesImporter {
     private Flux<FinnhubCandle> getCandlesFromUris(final Flux<String> uris) {
         return uris
                 .delayElements(Duration.ofMillis((1 / CALLS_ALLOWED_PER_SECOND) * 1000))
-                .doOnNext(uri -> log.info("Calling uri:{}", uri.split("&token")[0])) //debug when efk stack used
+                .doOnNext(uri -> log.info("Calling uri:{}", uri.split("&token")[0]))
                 .flatMap(uri -> webClient
                         .get()
                         .uri(uri)
-                        .exchange()
-                        .flatMap(response -> response.bodyToMono(FinnhubCandle.class))
+                        .exchangeToMono(response -> response.bodyToMono(FinnhubCandle.class))
                         .doOnNext(candle -> candle.setSymbol(extractSymbolFromUrl(uri)))
                         .retry()
                 );

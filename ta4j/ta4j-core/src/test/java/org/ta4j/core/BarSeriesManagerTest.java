@@ -23,15 +23,6 @@
  */
 package org.ta4j.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.function.Function;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.ta4j.core.Trade.TradeType;
@@ -39,6 +30,15 @@ import org.ta4j.core.indicators.AbstractIndicatorTest;
 import org.ta4j.core.mocks.MockBarSeries;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.rules.FixedRule;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BarSeriesManagerTest extends AbstractIndicatorTest<BarSeries, Num> {
 
@@ -120,6 +120,7 @@ public class BarSeriesManagerTest extends AbstractIndicatorTest<BarSeries, Num> 
     public void runWithOpenEntrySellLeft() {
         Strategy aStrategy = new BaseStrategy(new FixedRule(1), new FixedRule(3));
         List<Position> positions = manager.run(aStrategy, TradeType.SELL, 0, 3).getPositions();
+
         assertEquals(1, positions.size());
 
         assertEquals(Trade.sellAt(1, seriesForRun.getBar(1).getClosePrice(), numOf(1)), positions.get(0).getEntry());

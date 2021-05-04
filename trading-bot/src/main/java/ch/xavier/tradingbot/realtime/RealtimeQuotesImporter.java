@@ -16,7 +16,9 @@ import net.jacobpeterson.alpaca.websocket.marketdata.listener.MarketDataListener
 import net.jacobpeterson.alpaca.websocket.marketdata.message.MarketDataMessageType;
 import net.jacobpeterson.domain.alpaca.marketdata.realtime.MarketDataMessage;
 import net.jacobpeterson.domain.alpaca.marketdata.realtime.bar.BarMessage;
+import org.ta4j.core.Bar;
 import org.ta4j.core.BaseBar;
+import org.ta4j.core.num.DecimalNum;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -27,7 +29,7 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
 
     private final Map<String, MarketDataListener> realtimeQuotesImporters = new HashMap<>();
     private static AlpacaAPI api;
-    private static  ActorRef<Topic.Command<NewBarMessage>> topicRef;
+    private static ActorRef<Topic.Command<NewBarMessage>> topicRef;
 
 
     public static Behavior<WatchSymbolMessage> create(AlpacaAPI alpacaAPI, ActorRef<Topic.Command<NewBarMessage>> newQuotesTopicActorRef) {
@@ -52,18 +54,30 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
     private Behavior<WatchSymbolMessage> watchSymbol(WatchSymbolMessage message) {
         getContext().getLog().info("Now watching symbol:{}", message.symbol());
 
-        MarketDataListener listenerTSLA = new MarketDataListenerAdapter(message.symbol(), MarketDataMessageType.BAR){
+        MarketDataListener listenerTSLA = new MarketDataListenerAdapter(message.symbol(), MarketDataMessageType.BAR) {
             @Override
             public void onStreamUpdate(MarketDataMessageType streamMessageType, MarketDataMessage streamMessage) {
                 if (streamMessageType == MarketDataMessageType.BAR) {
                     BarMessage barMessage = (BarMessage) streamMessage;
-                    getContext().getSystem().log().info("Bar received for symbol:{}: Open={} High={} Low={} Close={} Timestamp={}",
+                    getContext().getSystem().log().info("Bar received for symbol:{}: Open={} High={} Low={} Close={} " +
+                                    "Timestamp={}, sending quote to topic",
                             message.symbol(),
                             barMessage.getOpen(),
                             barMessage.getHigh(),
                             barMessage.getLow(),
                             barMessage.getClose(),
                             barMessage.getTimestamp());
+
+                    topicRef.tell(Topic.publish(new NewBarMessage(
+                            BaseBar.builder()
+                                    .openPrice(DecimalNum.valueOf(barMessage.getOpen()))
+                                    .closePrice(DecimalNum.valueOf(barMessage.getClose()))
+                                    .highPrice(DecimalNum.valueOf(barMessage.getHigh()))
+                                    .lowPrice(DecimalNum.valueOf(barMessage.getLow()))
+                                    .endTime(barMessage.getTimestamp())
+                                    .volume(DecimalNum.valueOf(barMessage.getVolume()))
+                                    .build(),
+                            message.symbol())));
                 } else {
                     getContext().getSystem().log().error("Unknowm message received when watching symbol:{}, here it is:{}", message.symbol(),
                             streamMessage.toString());

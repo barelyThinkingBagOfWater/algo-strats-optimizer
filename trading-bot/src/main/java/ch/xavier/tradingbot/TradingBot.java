@@ -2,7 +2,6 @@ package ch.xavier.tradingbot;
 
 import akka.actor.typed.ActorSystem;
 import ch.xavier.tradingbot.quote.MongoQuotesRepository;
-import ch.xavier.tradingbot.strategies.ActorsInitializer;
 import net.jacobpeterson.alpaca.AlpacaAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

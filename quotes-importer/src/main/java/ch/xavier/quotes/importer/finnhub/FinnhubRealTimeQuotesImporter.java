@@ -1,8 +1,7 @@
 package ch.xavier.quotes.importer.finnhub;
 
-import ch.xavier.quotes.importer.config.GeneralConfig;
+import ch.xavier.quotes.importer.SymbolsRegistry;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
@@ -27,7 +26,7 @@ public class FinnhubRealTimeQuotesImporter implements AutoCloseable {
     public FinnhubRealTimeQuotesImporter() {
         log.info("Now entering ctor of RealTime quotes importer");
 
-        Flux<String> symbolsToWatchMessage = GeneralConfig.TWO_OFTEN_TRADED_SYMBOLS
+        Flux<String> symbolsToWatchMessage = SymbolsRegistry.TWO_OFTEN_TRADED_SYMBOLS
                 .map(symbol -> SUBSCRIPTION_TEMPLATE.replace("%SYMBOL", symbol));
 
 

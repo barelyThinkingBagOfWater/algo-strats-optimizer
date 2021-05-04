@@ -42,7 +42,7 @@ public abstract class StrategyResult {
     public String toString() {
         return "StrategyResult{" +
                 "symbol='" + symbol + '\'' +
-                ", avgProfitTrades=" + winningPositionsRatio +
+                ", winningPositionsRatio=" + winningPositionsRatio +
                 ", avgProfit=" + avgProfit +
                 ", grossProfit=" + grossProfit +
                 ", netProfit=" + netProfit +

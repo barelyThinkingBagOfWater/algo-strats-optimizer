@@ -69,7 +69,7 @@ public class RunningStrategyActor extends AbstractBehavior<NewBarMessage> {
         return this;
     }
 
-    public BarSeries fetchSeries(String symbol, int numberOfQuotesUsedByStrategy) {
+    private BarSeries fetchSeries(String symbol, int numberOfQuotesUsedByStrategy) {
         final BaseBarSeries series = new BaseBarSeriesBuilder().withName(symbol).build();
         series.setMaximumBarCount(numberOfQuotesUsedByStrategy);
 
