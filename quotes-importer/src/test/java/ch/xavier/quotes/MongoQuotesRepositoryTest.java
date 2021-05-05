@@ -51,11 +51,4 @@ class MongoQuotesRepositoryTest {
                 .doOnNext(count -> Assertions.assertEquals(2, count))
                 .block();
     }
-
-    @Test
-    public void list_all_distinct_symbols_for_quote_type() {
-        repository.findAllSymbolsForQuoteType(OneMinQuote.class)
-                .doOnNext(symbol -> log.info("Symbol:{}", symbol))
-                .blockLast();
-    }
 }

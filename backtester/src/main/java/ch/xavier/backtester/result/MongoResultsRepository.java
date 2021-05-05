@@ -27,13 +27,11 @@ public class MongoResultsRepository {
 
     private static final String DATABASE_NAME = "results";
 
-
     private final ReactiveMongoTemplate template;
-    private final MongoClient webclient;
 
     @Autowired
     public MongoResultsRepository(@Value("${spring.data.mongodb.uri}") String mongoUri) {
-        webclient = MongoClients.create(mongoUri.replace("%database", DATABASE_NAME));
+        MongoClient webclient = MongoClients.create(mongoUri.replace("%database", DATABASE_NAME));
         this.template = new ReactiveMongoTemplate(webclient, DATABASE_NAME);
 
         this.template.setWriteConcern(WriteConcern.ACKNOWLEDGED); //server acks write operations

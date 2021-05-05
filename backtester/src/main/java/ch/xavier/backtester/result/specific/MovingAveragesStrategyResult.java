@@ -26,11 +26,11 @@ public class MovingAveragesStrategyResult extends StrategyResult {
     @Override
     public String toString() {
         return "MovingAveragesStrategyResult{" +
-                "movingAverageType='" + movingAverageType + '\'' +
                 ", buyShortMA=" + buyShortMA +
                 ", buyLongMA=" + buyLongMA +
                 ", sellShortMA=" + sellShortMA +
                 ", sellLongMA=" + sellLongMA +
+                "movingAverageType=" + movingAverageType +
                 super.toString() +
                 '}';
     }

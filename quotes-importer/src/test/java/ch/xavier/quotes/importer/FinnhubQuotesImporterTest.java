@@ -67,6 +67,13 @@ class FinnhubQuotesImporterTest {
                 .blockLast();
     }
 
+    @Test
+    public void list_all_distinct_symbols_for_quote_type() {
+        repository.findAllSymbolsForQuoteType(OneMinQuote.class)
+                .doOnNext(symbol -> log.info("Symbol:{}", symbol))
+                .blockLast();
+    }
+
 
     @Test //Takes ~90 seconds
     public void populateDB_with_all_quotes_of_FB() {

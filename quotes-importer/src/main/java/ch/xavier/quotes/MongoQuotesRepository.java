@@ -39,7 +39,6 @@ public class MongoQuotesRepository {
                 .onErrorResume(e -> Mono.empty());
     }
 
-
     public Flux<? extends Quote> findAllBySymbol(final String symbol, final Class<? extends Quote> quoteType) {
         final Query query = new Query();
         query.addCriteria(Criteria.where("symbol").is(symbol));

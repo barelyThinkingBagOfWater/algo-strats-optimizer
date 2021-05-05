@@ -105,7 +105,6 @@ public enum StrategiesFactory {
 
 
     private Flux<Object> getAllPossibleValues(Field field) {
-
         if (field.getType().isEnum()) {
             Class enumClass = field.getType();
 
@@ -118,6 +117,8 @@ public enum StrategiesFactory {
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 log.error("There was an error when iterating the enum {}, please check why:", field.getType().getName(), e);
             }
+        } else if (field.getType().equals(String.class)) {
+            return Flux.fromArray(field.getAnnotation(Analyzable.class).stringValues());
         }
 
         int minValue = field.getAnnotation(Analyzable.class).minValue();

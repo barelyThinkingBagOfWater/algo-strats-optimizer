@@ -11,4 +11,5 @@ public @interface Analyzable {
     int minValue() default 0;
     int maxValue() default 0;
     int[] additionalValues() default {};
+    String[] stringValues() default {};
 }

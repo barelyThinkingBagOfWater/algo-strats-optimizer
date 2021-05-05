@@ -8,7 +8,6 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.pubsub.Topic;
-import ch.xavier.tradingbot.strategies.RunningStrategyActor;
 import net.jacobpeterson.abstracts.websocket.exception.WebsocketException;
 import net.jacobpeterson.alpaca.AlpacaAPI;
 import net.jacobpeterson.alpaca.websocket.marketdata.listener.MarketDataListener;
@@ -16,16 +15,13 @@ import net.jacobpeterson.alpaca.websocket.marketdata.listener.MarketDataListener
 import net.jacobpeterson.alpaca.websocket.marketdata.message.MarketDataMessageType;
 import net.jacobpeterson.domain.alpaca.marketdata.realtime.MarketDataMessage;
 import net.jacobpeterson.domain.alpaca.marketdata.realtime.bar.BarMessage;
-import org.ta4j.core.Bar;
 import org.ta4j.core.BaseBar;
 import org.ta4j.core.num.DecimalNum;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage> {
+public class AlpacaRealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage> {
 
     private final Map<String, MarketDataListener> realtimeQuotesImporters = new HashMap<>();
     private static AlpacaAPI api;
@@ -36,10 +32,10 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
         api = alpacaAPI;
         topicRef = newQuotesTopicActorRef;
 
-        return Behaviors.setup(RealtimeQuotesImporter::new);
+        return Behaviors.setup(AlpacaRealtimeQuotesImporter::new);
     }
 
-    private RealtimeQuotesImporter(ActorContext<WatchSymbolMessage> context) {
+    private AlpacaRealtimeQuotesImporter(ActorContext<WatchSymbolMessage> context) {
         super(context);
     }
 
@@ -52,7 +48,7 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
     }
 
     private Behavior<WatchSymbolMessage> watchSymbol(WatchSymbolMessage message) {
-        getContext().getLog().info("Now watching symbol:{}", message.symbol());
+        getContext().getLog().info("Now watching symbol:{} from Alpaca", message.symbol());
 
         MarketDataListener listenerTSLA = new MarketDataListenerAdapter(message.symbol(), MarketDataMessageType.BAR) {
             @Override
@@ -98,7 +94,7 @@ public class RealtimeQuotesImporter extends AbstractBehavior<WatchSymbolMessage>
     }
 
     private Behavior<WatchSymbolMessage> onPostStop() { //Test me in real conditions
-        getContext().getSystem().log().info("Stopping quotesImporter, {} listeners to stop", realtimeQuotesImporters.size());
+        getContext().getSystem().log().info("Stopping AlpacaQuotesImporter, {} listeners to stop", realtimeQuotesImporters.size());
 
         realtimeQuotesImporters.forEach((symbol, listener) -> {
             try {

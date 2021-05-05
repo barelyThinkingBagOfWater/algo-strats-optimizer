@@ -122,11 +122,11 @@ public class ResultsFactory {
                                 .maxDrawDown(maxDrawDown.calculate(series, record).doubleValue())
 
                                 //Strategy parameters
-                                .movingAverageType(record.getStrategyParameters().get("movingAverageType"))
                                 .buyShortMA(Integer.parseInt(record.getStrategyParameters().get("buyShortMA")))
                                 .buyLongMA(Integer.parseInt(record.getStrategyParameters().get("buyLongMA")))
                                 .sellShortMA(Integer.parseInt(record.getStrategyParameters().get("sellShortMA")))
                                 .sellLongMA(Integer.parseInt(record.getStrategyParameters().get("sellLongMA")))
+                                .movingAverageType(record.getStrategyParameters().get("movingAverageType"))
 
                                 .build()
                 );
