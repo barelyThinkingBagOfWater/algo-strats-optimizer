@@ -3,10 +3,12 @@ package ch.xavier.quotes.importer.finnhub;
 import ch.xavier.quotes.Quote;
 import ch.xavier.quotes.Quote.QuoteType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 
@@ -24,7 +26,7 @@ public class FinnhubAdapter {
         webClient = WebClient.builder()
                 .baseUrl(FinnhubUriFactory.getRestBaseStockUrl())
                 .exchangeStrategies(ExchangeStrategies.builder()
-                        .codecs(configurer -> configurer
+                        .codecs(configuration -> configuration
                                 .defaultCodecs()
                                 .maxInMemorySize(SIXTEEN_MB_BUFFER))
                         .build())
@@ -37,11 +39,16 @@ public class FinnhubAdapter {
                 .flatMap(candle -> candle.toQuotes(type));
     }
 
+    public Flux<Quote> getQuotes(final String symbol, QuoteType type) {
+        return getCandlesFromUris(FinnhubUriFactory.getQuotesUri(Flux.just(symbol), type))
+                .flatMap(candle -> candle.toQuotes(type));
+    }
+
 
     private Flux<FinnhubCandle> getCandlesFromUris(final Flux<String> uris) {
         return uris
                 .delayElements(Duration.ofMillis((1 / CALLS_ALLOWED_PER_SECOND) * 1000))
-                .doOnNext(uri -> log.info("Calling uri:{}", uri.split("&token")[0]))
+                .doOnNext(uri -> log.debug("Calling uri:{}", uri.split("&token")[0]))
                 .flatMap(uri -> webClient
                         .get()
                         .uri(uri)
@@ -53,5 +60,14 @@ public class FinnhubAdapter {
 
     private String extractSymbolFromUrl(String url) {
         return url.split("&resolution")[0].split("symbol=")[1];
+    }
+
+    public Flux<String> getCryptoSymbolsForBinance() {
+        return webClient
+                .get()
+                .uri(FinnhubUriFactory.getListCryptoSymbolsBinanceUrl())
+                .accept(MediaType.APPLICATION_JSON)
+                .exchangeToFlux(response -> response.bodyToFlux(FinnhubCryptoSymbol.class))
+                .map(FinnhubCryptoSymbol::getSymbol);
     }
 }

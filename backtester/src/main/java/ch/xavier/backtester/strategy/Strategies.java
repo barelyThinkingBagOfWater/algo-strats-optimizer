@@ -18,7 +18,7 @@ public enum Strategies {
     ADXStrategy(ADXStrategy.class, 2520, AdxStrategyResult.class, Set.of("adxDays", "smaDays", "overAdxIndicatorDays")),
     CCICorrectionStrategy(CCICorrectionStrategy.class, 2400, CciCorrectionsStrategyResult.class, Set.of("shortCci", "longCci", "unstablePeriod")),
     GlobalExtremaStrategy(GlobalExtremaStrategy.class, 60, GlobalExtremaStrategyResult.class, Set.of("rangeInPercent", "numberOfBars")),
-    MovingAveragesStrategy(MovingAveragesStrategy.class, 589824, MovingAveragesStrategyResult.class, Set.of("buyShortMA", "buyLongMA", "sellShortMA", "sellLongMA"));
+    MovingAveragesStrategy(MovingAveragesStrategy.class, 589824, MovingAveragesStrategyResult.class, Set.of("buyShortMA", "buyLongMA", "sellShortMA", "sellLongMA", "movingAverageType"));
 
 
     private final Class<? extends AnalyzableStrategy> className;

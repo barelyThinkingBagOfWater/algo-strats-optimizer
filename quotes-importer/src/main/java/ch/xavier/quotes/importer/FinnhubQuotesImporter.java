@@ -25,6 +25,14 @@ public class FinnhubQuotesImporter {
 
     public Flux<Quote> fetchAndSaveQuotes(Flux<String> symbols, QuoteType type) {
         return finnhubAdapter.getQuotes(symbols, type)
+                //TEST ME and use me if needed, goes after symbols above
+//                .filter(symbol -> quotesRepository.findAllBySymbol(symbol, type.getQuoteClass()).count()
+//                        .block().equals(0)), type)
+                .flatMap(quotesRepository::save);
+    }
+
+    public Flux<Quote> fetchAndSaveQuotes(String symbol, QuoteType type) {
+        return finnhubAdapter.getQuotes(symbol, type)
                 .flatMap(quotesRepository::save);
     }
 

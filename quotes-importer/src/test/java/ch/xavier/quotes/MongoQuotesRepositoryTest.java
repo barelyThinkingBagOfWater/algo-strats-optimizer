@@ -1,12 +1,12 @@
 package ch.xavier.quotes;
 
+import ch.xavier.quotes.typedQuotes.OneMinQuote;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import reactor.core.publisher.Flux;
 
 @SpringBootTest
@@ -50,5 +50,12 @@ class MongoQuotesRepositoryTest {
                 .then(repository.count(ITestQuote.class))
                 .doOnNext(count -> Assertions.assertEquals(2, count))
                 .block();
+    }
+
+    @Test
+    public void list_all_distinct_symbols_for_quote_type() {
+        repository.findAllSymbolsForQuoteType(OneMinQuote.class)
+                .doOnNext(symbol -> log.info("Symbol:{}", symbol))
+                .blockLast();
     }
 }

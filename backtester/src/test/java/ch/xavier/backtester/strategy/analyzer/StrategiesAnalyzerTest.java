@@ -32,11 +32,11 @@ class StrategiesAnalyzerTest {
     public void run_OneStrat_onFB_withOneMinQuote() {
         // GIVEN
 //        resultsRepository.dropCollection(TEST_COLLECTION_NAME).block();
-        QuoteType quoteType = QuoteType.DAILY;
+        QuoteType quoteType = QuoteType.ONE_MIN;
         Strategies strat = Strategies.MovingAveragesStrategy;
 
         // WHEN
-        analyzer.analyzeStrategyOnSymbolsWithQuotes(Flux.just("FB"), quoteType, strat).blockLast();
+        analyzer.analyzeStrategyOnSymbolsWithQuotes(Flux.just("BINANCE:BTCUSDT"), quoteType, strat).blockLast();
 
         // THEN
 //        assertEquals(4920, resultsRepository.countResultsInCollection(TEST_COLLECTION_NAME).block()); //60 variations * 82 symbols

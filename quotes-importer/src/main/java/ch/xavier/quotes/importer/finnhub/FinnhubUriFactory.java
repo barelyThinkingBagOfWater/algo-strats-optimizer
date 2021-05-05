@@ -22,6 +22,7 @@ public class FinnhubUriFactory {
     private static final String STOCK_CANDLE_URL = "stock/candle";
     private static final String CRYPTO_CANDLE_URL = "crypto/candle";
     private static final String WSS_BASE_URL = "wss://ws.finnhub.io?token=";
+    private static final String LIST_CRYPTO_SYMBOLS_BINANCE_URL = "crypto/symbol?exchange=binance";
 
     private static final int EARLIEST_YEAR_FOR_QUOTES = 2012;
     private static final String DAILY_DURATION = "D";
@@ -91,5 +92,14 @@ public class FinnhubUriFactory {
 
     public static String getWssBaseUrl() {
         return WSS_BASE_URL.concat(TOKEN);
+    }
+
+    public static String getListCryptoSymbolsBinanceUrl() {
+        return LIST_CRYPTO_SYMBOLS_BINANCE_URL + "&token=" + TOKEN;
+    }
+
+    public static String getSingleCryptoCandleUrlForSymbol(final String symbol) {
+        return CRYPTO_CANDLE_URL + "?symbol=" + symbol +
+                        "&resolution=1&from=1604679795&to=1620179795&token=" + TOKEN;
     }
 }

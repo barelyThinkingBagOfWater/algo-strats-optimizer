@@ -30,7 +30,7 @@ public class MongoQuotesRepository {
 
     public Mono<Quote> save(final Quote quote) {
         return template.save(quote)
-                .onErrorResume(e -> Mono.empty()); //So duplicates don't interrupt the flows,
+                .onErrorResume(e -> Mono.empty()); //So duplicates don't interrupt the flux,
         //filtering by ExceptionClass doesn't work (DuplicateKeyException)
     }
 
@@ -76,5 +76,9 @@ public class MongoQuotesRepository {
                                 .on("symbol", Sort.Direction.ASC)
                                 .on("timestamp", Sort.Direction.ASC).unique()))
                 .onErrorResume(e -> Mono.empty()); //if the collection exist don't interrupt the Flux
+    }
+
+    public Flux<String> findAllSymbolsForQuoteType(final Class<? extends Quote> quoteType) {
+        return template.findDistinct(new Query(), "symbol", quoteType, String.class);
     }
 }

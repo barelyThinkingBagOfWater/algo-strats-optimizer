@@ -9,7 +9,7 @@ import lombok.ToString;
 import reactor.core.publisher.Flux;
 import reactor.util.function.Tuple6;
 
-@NoArgsConstructor
+@NoArgsConstructor //required for deserialization
 @Getter
 @AllArgsConstructor
 @ToString
